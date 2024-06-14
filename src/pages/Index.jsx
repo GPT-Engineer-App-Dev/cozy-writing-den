@@ -1,7 +1,16 @@
-import { Container, VStack, Heading, Text, Box, Image, HStack, IconButton } from "@chakra-ui/react";
+import { Container, VStack, Heading, Text, Box, Image, HStack, IconButton, Button } from "@chakra-ui/react";
 import { FaTwitter, FaLinkedin, FaGithub } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 const Index = () => {
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    const storedPosts = JSON.parse(localStorage.getItem("posts")) || [];
+    setPosts(storedPosts);
+  }, []);
+
   return (
     <Container centerContent maxW="container.md" py={10}>
       <VStack spacing={8} align="stretch">
@@ -12,21 +21,25 @@ const Index = () => {
         <Box>
           <Image src="/images/blog-banner.jpg" alt="Blog Banner" borderRadius="md" />
         </Box>
+        <Box textAlign="center">
+          <Button as={Link} to="/add-post" colorScheme="teal" size="lg">Add New Post</Button>
+        </Box>
         <Box>
           <Heading as="h2" size="lg" mb={4}>Latest Posts</Heading>
           <VStack spacing={4} align="stretch">
-            <Box p={5} shadow="md" borderWidth="1px" borderRadius="md">
-              <Heading fontSize="xl">Understanding React Hooks</Heading>
-              <Text mt={4}>An in-depth look at how to use React Hooks to manage state and side effects in your functional components.</Text>
-            </Box>
-            <Box p={5} shadow="md" borderWidth="1px" borderRadius="md">
-              <Heading fontSize="xl">A Guide to Modern CSS</Heading>
-              <Text mt={4}>Explore the latest features in CSS, including Flexbox, Grid, and custom properties, to create responsive and dynamic layouts.</Text>
-            </Box>
-            <Box p={5} shadow="md" borderWidth="1px" borderRadius="md">
-              <Heading fontSize="xl">JavaScript ES2021 Features</Heading>
-              <Text mt={4}>Learn about the new features introduced in ES2021 and how they can help you write cleaner and more efficient JavaScript code.</Text>
-            </Box>
+            {posts.map((post, index) => (
+              <Box key={index} p={5} shadow="md" borderWidth="1px" borderRadius="md">
+                <Heading fontSize="xl">{post.title}</Heading>
+                <Text mt={4}>{post.content}</Text>
+                {post.tags && (
+                  <HStack spacing={2} mt={4}>
+                    {post.tags.map((tag, tagIndex) => (
+                      <Text key={tagIndex} fontSize="sm" color="gray.500">#{tag}</Text>
+                    ))}
+                  </HStack>
+                )}
+              </Box>
+            ))}
           </VStack>
         </Box>
         <Box textAlign="center">
